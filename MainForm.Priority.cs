@@ -13,8 +13,7 @@ internal sealed partial class MainForm
         foreach (var path in new[]
         {
             Path.Combine(_paksDirectory, mod.FileName),
-            GetDisabledPath(mod.FileName),
-            GetLegacyDisabledPath(mod.FileName)
+            GetDisabledPath(mod.FileName)
         })
         {
             if (File.Exists(path))
@@ -483,10 +482,8 @@ internal sealed partial class MainForm
         {
             (Path.Combine(_paksDirectory, oldName), Path.Combine(_paksDirectory, newName)),
             (GetDisabledPath(oldName), GetDisabledPath(newName)),
-            (GetLegacyDisabledPath(oldName), GetLegacyDisabledPath(newName)),
             (Path.Combine(_paksDirectory, oldSignature), Path.Combine(_paksDirectory, newSignature)),
             (GetDisabledPath(oldSignature), GetDisabledPath(newSignature)),
-            (GetLegacyDisabledPath(oldSignature), GetLegacyDisabledPath(newSignature)),
             (Path.Combine(_paksDirectory, oldName + ".list"), Path.Combine(_paksDirectory, newName + ".list"))
         };
         return candidates.Where(pair => File.Exists(pair.Source));

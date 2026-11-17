@@ -2,8 +2,6 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using Microsoft.Win32;
 
@@ -300,7 +298,7 @@ internal sealed partial class MainForm : Form
         _desiredStates.Clear();
         _gameExecutable = FindGameExecutable(_gameDirectory);
         _paksDirectory = paksDirectory;
-        _manifestPath = Path.Combine(_settingsDirectory, $"{GetInstallKey(_paksDirectory)}-mods.json");
+        _manifestPath = Path.Combine(_settingsDirectory, "mods.json");
         _gamePathBox.Text = _gameDirectory;
         LoadManifest();
         DiscoverInstalledMods();
@@ -680,16 +678,13 @@ internal sealed partial class MainForm : Form
     {
         var activePak = Path.Combine(_paksDirectory, mod.FileName);
         var renamedDisabledPak = GetDisabledPath(mod.FileName);
-        var legacyDisabledPak = GetLegacyDisabledPath(mod.FileName);
         var isActive = File.Exists(activePak);
         var isRenamedDisabled = File.Exists(renamedDisabledPak);
-        var isLegacyDisabled = File.Exists(legacyDisabledPak);
-        if ((isActive && (isRenamedDisabled || isLegacyDisabled)) ||
-            (isRenamedDisabled && isLegacyDisabled))
+        if (isActive && isRenamedDisabled)
         {
             throw new IOException($"'{mod.FileName}' has conflicting enabled and disabled copies. Resolve the conflict before importing it.");
         }
-        return isActive || isRenamedDisabled || isLegacyDisabled;
+        return isActive || isRenamedDisabled;
     }
 
     private bool ValidateRestoredSignature(ModEntry mod, bool isDisabledPak, bool hasSourceSignature)
@@ -829,7 +824,7 @@ internal sealed partial class MainForm : Form
         {
             throw new InvalidOperationException($"'{fileName}' is already in this manager's list.");
         }
-        if (File.Exists(GetDisabledPath(fileName)) || File.Exists(GetLegacyDisabledPath(fileName)))
+        if (File.Exists(GetDisabledPath(fileName)))
         {
             throw new IOException($"A disabled mod with this name is already stored: {fileName}");
         }
@@ -849,8 +844,7 @@ internal sealed partial class MainForm : Form
         {
             throw new FileNotFoundException("The selected disabled PAK file no longer exists.", disabledPak);
         }
-        if (File.Exists(Path.Combine(_paksDirectory, fileName)) ||
-            File.Exists(GetLegacyDisabledPath(fileName)))
+        if (File.Exists(Path.Combine(_paksDirectory, fileName)))
         {
             throw new IOException($"'{fileName}' already has another enabled or disabled copy.");
         }
@@ -890,7 +884,7 @@ internal sealed partial class MainForm : Form
             throw new IOException(
                 $"'{fileName}' already exists in the game Paks folder. Import that file to register it without replacing it.");
         }
-        if (File.Exists(GetDisabledPath(fileName)) || File.Exists(GetLegacyDisabledPath(fileName)))
+        if (File.Exists(GetDisabledPath(fileName)))
         {
             throw new IOException($"A disabled mod with this name is already stored: {fileName}");
         }
@@ -915,16 +909,13 @@ internal sealed partial class MainForm : Form
             {
                 var activePak = Path.Combine(_paksDirectory, mod.FileName);
                 var disabledPak = GetDisabledPath(mod.FileName);
-                var legacyDisabledPak = GetLegacyDisabledPath(mod.FileName);
                 var isActive = File.Exists(activePak);
                 var isDisabled = File.Exists(disabledPak);
-                var isLegacyDisabled = File.Exists(legacyDisabledPak);
-                if (!isActive && !isDisabled && !isLegacyDisabled)
+                if (!isActive && !isDisabled)
                 {
                     continue;
                 }
-                if ((isActive && (isDisabled || isLegacyDisabled)) ||
-                    (isDisabled && isLegacyDisabled))
+                if (isActive && isDisabled)
                 {
                     throw new IOException(
                         $"Cannot determine the state of '{mod.FileName}'. Its enabled and disabled copies are conflicting or missing.");
@@ -935,7 +926,7 @@ internal sealed partial class MainForm : Form
                     continue;
                 }
 
-                TransferModFiles(mod, enable: shouldBeEnabled, fromLegacyDisabled: isLegacyDisabled);
+                TransferModFiles(mod, enable: shouldBeEnabled);
                 changed++;
             }
 
@@ -950,10 +941,10 @@ internal sealed partial class MainForm : Form
         }
     }
 
-    private void TransferModFiles(ModEntry mod, bool enable, bool fromLegacyDisabled)
+    private void TransferModFiles(ModEntry mod, bool enable)
     {
         var sourcePak = enable
-            ? fromLegacyDisabled ? GetLegacyDisabledPath(mod.FileName) : GetDisabledPath(mod.FileName)
+            ? GetDisabledPath(mod.FileName)
             : Path.Combine(_paksDirectory, mod.FileName);
         var destinationPak = enable ? Path.Combine(_paksDirectory, mod.FileName) : GetDisabledPath(mod.FileName);
         var sourceFiles = new List<(string Source, string Destination)> { (sourcePak, destinationPak) };
@@ -961,7 +952,7 @@ internal sealed partial class MainForm : Form
         {
             var signatureName = Path.ChangeExtension(mod.FileName, ".sig");
             var sourceSignature = enable
-                ? fromLegacyDisabled ? GetLegacyDisabledPath(signatureName) : GetDisabledPath(signatureName)
+                ? GetDisabledPath(signatureName)
                 : Path.Combine(_paksDirectory, signatureName);
             var destinationSignature = enable
                 ? Path.Combine(_paksDirectory, signatureName)
@@ -1068,14 +1059,12 @@ internal sealed partial class MainForm : Form
             {
                 DeleteIfExists(Path.Combine(_paksDirectory, mod.FileName));
                 DeleteIfExists(GetDisabledPath(mod.FileName));
-                DeleteIfExists(GetLegacyDisabledPath(mod.FileName));
                 DeleteIfExists(Path.Combine(_paksDirectory, mod.FileName + ".list"));
                 if (mod.HasSignature)
                 {
                     var signatureName = Path.ChangeExtension(mod.FileName, ".sig");
                     DeleteIfExists(Path.Combine(_paksDirectory, signatureName));
                     DeleteIfExists(GetDisabledPath(signatureName));
-                    DeleteIfExists(GetLegacyDisabledPath(signatureName));
                 }
                 _mods.Remove(mod);
                 SaveManifest();
@@ -1160,8 +1149,7 @@ internal sealed partial class MainForm : Form
             var discoveredMods = DiscoverInstalledMods();
             var missingMods = _mods.Where(mod =>
                 !File.Exists(Path.Combine(_paksDirectory, mod.FileName)) &&
-                !File.Exists(GetDisabledPath(mod.FileName)) &&
-                !File.Exists(GetLegacyDisabledPath(mod.FileName))).ToList();
+                !File.Exists(GetDisabledPath(mod.FileName))).ToList();
             foreach (var missingMod in missingMods)
             {
                 _mods.Remove(missingMod);
@@ -1248,18 +1236,13 @@ internal sealed partial class MainForm : Form
     {
         var isActive = File.Exists(Path.Combine(_paksDirectory, mod.FileName));
         var isRenamedDisabled = File.Exists(GetDisabledPath(mod.FileName));
-        var isLegacyDisabled = File.Exists(GetLegacyDisabledPath(mod.FileName));
-        if (isActive && !isRenamedDisabled && !isLegacyDisabled)
+        if (isActive && !isRenamedDisabled)
         {
             return "Enabled";
         }
-        if (!isActive && isRenamedDisabled && !isLegacyDisabled)
+        if (!isActive && isRenamedDisabled)
         {
             return "Disabled";
-        }
-        if (!isActive && !isRenamedDisabled && isLegacyDisabled)
-        {
-            return "Disabled (legacy)";
         }
         return "Missing / conflict";
     }
@@ -1296,10 +1279,7 @@ internal sealed partial class MainForm : Form
 
             var isActive = File.Exists(Path.Combine(_paksDirectory, fileName));
             var isRenamedDisabled = File.Exists(GetDisabledPath(fileName));
-            var isLegacyDisabled = File.Exists(GetLegacyDisabledPath(fileName));
-            if ((isActive && (isRenamedDisabled || isLegacyDisabled)) ||
-                (!isActive && !isRenamedDisabled && !isLegacyDisabled) ||
-                (isRenamedDisabled && isLegacyDisabled))
+            if (isActive == isRenamedDisabled)
             {
                 continue;
             }
@@ -1318,15 +1298,6 @@ internal sealed partial class MainForm : Form
     private string GetDisabledPath(string fileName)
     {
         return Path.Combine(_paksDirectory, fileName + ".disabled");
-    }
-
-    private string GetLegacyDisabledPath(string fileName) =>
-        Path.Combine(_settingsDirectory, "DisabledMods", GetInstallKey(_paksDirectory), fileName);
-
-    private static string GetInstallKey(string paksDirectory)
-    {
-        var normalized = Path.GetFullPath(paksDirectory).TrimEnd(Path.DirectorySeparatorChar).ToUpperInvariant();
-        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(normalized)))[..16];
     }
 
     private static bool IsSafePakFileName(string fileName) =>
