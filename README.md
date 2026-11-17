@@ -46,3 +46,13 @@ To create a release build:
 ```powershell
 dotnet publish R2MM.csproj -c Release
 ```
+
+## More info & support
+
+Questions, feedback, bug reports or suggestions? Join the official Redout Discord and find us there.
+
+<p align="center">
+  <a href="https://discord.gg/redout">
+    <img alt="Join the Redout Discord" src="https://img.shields.io/badge/Join%20the%20Redout%20Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white">
+  </a>
+</p>
