@@ -15,9 +15,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
@@ -35,13 +35,13 @@ jobs:
           -p:AssemblyName=Redout2ModManager-NoRuntime
           -o publish/no-runtime
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Redout2ModManager-bundled
           path: publish/bundled/Redout2ModManager.exe
           if-no-files-found: error
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: Redout2ModManager-NoRuntime
           path: publish/no-runtime/Redout2ModManager-NoRuntime.exe
