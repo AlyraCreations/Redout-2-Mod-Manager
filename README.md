@@ -4,6 +4,9 @@
   <a href="https://github.com/AlyraCreations/Redout-2-Mod-Manager/actions/workflows/dotnet-desktop.yml">
     <img alt="Build" src="https://github.com/AlyraCreations/Redout-2-Mod-Manager/actions/workflows/dotnet-desktop.yml/badge.svg?branch=main">
   </a>
+  <a href="https://github.com/AlyraCreations/Redout-2-Mod-Manager/releases/latest">
+    <img alt="Latest release" src="https://img.shields.io/github/v/release/AlyraCreations/Redout-2-Mod-Manager">
+  </a>
 </p>
 
 The **Redout 2 Mod Manager** allows for the automation of installing and enabling/disabling of mods, as well as changing the loading priority and can identify conflicts when multiple mods are writing to the same address
@@ -17,7 +20,7 @@ The app is **self-contained**
 
 ## First launch
 
-Download `Redout2ModManager.exe` from the releases here on Git. After launching it, the app should **automatically detect** the Redout 2 game folder and the mods present. If it does not, click **Browse...** and select the game folder manually, which is located in: `C:\Program Files (x86)\Steam\steamapps\common\Redout2\redout2`.
+Download `Redout2ModManager.exe` from the [latest release](https://github.com/AlyraCreations/Redout-2-Mod-Manager/releases/latest) on GitHub. After launching it, the app should **automatically detect** the Redout 2 game folder and the mods present. If it does not, click **Browse...** and select the game folder manually, which is located in: `C:\Program Files (x86)\Steam\steamapps\common\Redout2\redout2`.
 
 To install mods using the mod manager, **drag .PAK files, or a ZIP archive onto the app**. ZIP archives can contain one or more mods.
 You might have to drag some mods around before being able to apply the **automatic list ordering**.
