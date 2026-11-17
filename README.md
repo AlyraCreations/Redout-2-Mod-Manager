@@ -1,4 +1,10 @@
-# Redout 2 Mod Manager
+<h1 align="center">Redout 2 Mod Manager</h1>
+
+<p align="center">
+  <a href="https://github.com/AlyraCreations/Redout-2-Mod-Manager/actions/workflows/dotnet-desktop.yml">
+    <img alt="Build" src="https://github.com/AlyraCreations/Redout-2-Mod-Manager/actions/workflows/dotnet-desktop.yml/badge.svg?branch=main">
+  </a>
+</p>
 
 The **Redout 2 Mod Manager** allows for the automation of installing and enabling/disabling of mods, as well as changing the loading priority and can identify conflicts when multiple mods are writing to the same address
 
