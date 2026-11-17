@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # Self-contained single file: the .NET runtime is bundled (settings come from R2MM.csproj).
+      - name: Publish (bundled .NET runtime)
+        run: dotnet publish R2MM.csproj -c Release -r win-x64 -o publish/bundled
+
+      # Framework-dependent single file: requires the .NET 10 Desktop Runtime on the user's machine.
+      # Compression is only supported for self-contained apps, so it is disabled here.
+      - name: Publish (without .NET runtime)
+        run: >
+          dotnet publish R2MM.csproj -c Release -r win-x64
+          -p:SelfContained=false -p:PublishSelfContained=false
+          -p:EnableCompressionInSingleFile=false
+          -p:AssemblyName=Redout2ModManager-NoRuntime
+          -o publish/no-runtime
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Redout2ModManager-bundled
+          path: publish/bundled/Redout2ModManager.exe
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Redout2ModManager-NoRuntime
+          path: publish/no-runtime/Redout2ModManager-NoRuntime.exe
+          if-no-files-found: error
+
+      # A new <Version> in R2MM.csproj produces a new draft v<version> release with both executables attached.
+      - name: Create release for new version
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = (Select-String -Path R2MM.csproj -Pattern '<Version>(.+?)</Version>').Matches[0].Groups[1].Value
+          $tag = "v$version"
+          $existing = gh release list --limit 200 --json tagName --jq '.[].tagName'
+          if ($existing -contains $tag) {
+            Write-Host "Release $tag already exists (published or draft); nothing to do."
+            exit 0
+          }
+          gh release create $tag `
+            publish/bundled/Redout2ModManager.exe `
+            publish/no-runtime/Redout2ModManager-NoRuntime.exe `
+            --target $env:GITHUB_SHA --title $tag --generate-notes --draft
