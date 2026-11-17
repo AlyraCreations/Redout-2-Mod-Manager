@@ -11,7 +11,7 @@ The app is self-contained
 
 ## First launch
 
-Download RR2M.exe from the releases here on Git. After launching it, the app should automatically detect the Redout 2 game folder and the mods present. If it does not, click 'Browse...' and select the Game folder manually, which is located in: "C:\Program Files (x86)\Steam\steamapps\common\Redout2\redout2".
+Download Redout2ModManager.exe from the releases here on Git. After launching it, the app should automatically detect the Redout 2 game folder and the mods present. If it does not, click 'Browse...' and select the Game folder manually, which is located in: "C:\Program Files (x86)\Steam\steamapps\common\Redout2\redout2".
 To install mods using the mod manager, drag .PAK files, or a ZIP archive onto the app. ZIP archives can contain one or more mods.
 You might have to drag some mods around before being able to apply the automatic list ordering.
 
