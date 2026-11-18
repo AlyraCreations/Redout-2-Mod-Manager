@@ -17,9 +17,11 @@ The **Redout 2 Mod Manager** allows for the automation of installing and enablin
 ## Requirements
 
 - **Windows 10 or later, 64-bit**
-- **.NET 10.0.4**
 
-The app is **self-contained**
+Each release has two builds, so pick one:
+
+- `Redout2ModManager.exe`: **includes .NET**, so there is nothing else to install (about 49 MB).
+- `Redout2ModManager-NoRuntime.exe`: **small download** (under 1 MB), but it needs the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) installed.
 
 ## First launch
 
@@ -30,18 +32,18 @@ You might have to drag some mods around before being able to apply the **automat
 
 ## General functions
 
-- **Checkboxes** indicate if a mod is **enabled** or **disabled**. Select **Confirm change(s)** to apply, or **Revert change(s)** to discard pending changes
-- **Drag mods around** in the mod list to change their order, then confirm the change
-- The mod manager will automatically detect **conflicting files**. Such files will be highlighted **yellow** and can be viewed by selecting **Inspect conflict(s)**. R2MM reads from PAK indexes when possible. For an unreadable or unsupported PAK index, manually include a `pak.list` to allow for conflict detection. Mods without a readable index are reported as **unchecked**
-- **Uninstall selected** removes the selected files
-- In **Options**, you can open the game's mod folder, toggle the wallpaper on/off, or choose a custom wallpaper **(very important lol)**
+- **Checkboxes** indicate if a mod is **enabled** or **disabled**. Select **Confirm change(s)** to apply, or **Revert change(s)** to discard pending changes.
+- **Drag mods around** in the mod list to change their order, then confirm the change.
+- The mod manager will automatically detect **conflicting files**. Such files will be highlighted **yellow** and can be viewed by selecting **Inspect conflict(s)**. R2MM reads from PAK indexes when possible. For an unreadable or unsupported PAK index, manually add a `<mod-name>.pak.list` file next to the PAK to allow for conflict detection. Mods without a readable index are reported as **unchecked**.
+- **Uninstall selected** removes the selected files.
+- In **Options**, you can open the game's mod folder, toggle the wallpaper on/off, or choose a custom wallpaper **(very important lol)**.
 
 ## Build
 
 From the repository root, run:
 
 ```powershell
-dotnet run -p R2MM.csproj
+dotnet run --project R2MM.csproj
 ```
 
 To create a release build:
@@ -60,7 +62,7 @@ Questions, feedback, bug reports or suggestions? Join the official Redout Discor
   </a>
 </p>
 
-<p align="center"><b>Developers</b></p>
+<h3 align="center">Developers</h3>
 
 <p align="center">
   <a href="https://discord.com/users/492315815228473354">
