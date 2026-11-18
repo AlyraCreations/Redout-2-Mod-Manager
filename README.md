@@ -59,3 +59,14 @@ Questions, feedback, bug reports or suggestions? Join the official Redout Discor
     <img alt="Join the Redout Discord" src="https://img.shields.io/badge/Join%20the%20Redout%20Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white">
   </a>
 </p>
+
+<p align="center"><b>Developers</b></p>
+
+<p align="center">
+  <a href="https://discord.com/users/492315815228473354">
+    <img alt="Discord: AlyraCreations" src="https://img.shields.io/badge/AlyraCreations-5865F2?style=for-the-badge&logo=discord&logoColor=white&label=Discord">
+  </a>
+  <a href="https://discord.com/users/163315425818443776">
+    <img alt="Discord: jaSnom" src="https://img.shields.io/badge/jaSnom-5865F2?style=for-the-badge&logo=discord&logoColor=white&label=Discord">
+  </a>
+</p>
