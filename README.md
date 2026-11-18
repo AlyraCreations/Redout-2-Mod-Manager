@@ -7,6 +7,9 @@
   <a href="https://github.com/AlyraCreations/Redout-2-Mod-Manager/releases/latest">
     <img alt="Latest release" src="https://img.shields.io/github/v/release/AlyraCreations/Redout-2-Mod-Manager">
   </a>
+  <a href="https://github.com/AlyraCreations/Redout-2-Mod-Manager/releases">
+    <img alt="Latest pre-release" src="https://img.shields.io/github/v/release/AlyraCreations/Redout-2-Mod-Manager?include_prereleases&label=pre-release">
+  </a>
 </p>
 
 The **Redout 2 Mod Manager** allows for the automation of installing and enabling/disabling of mods, as well as changing the loading priority and can identify conflicts when multiple mods are writing to the same address
