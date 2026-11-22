@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Redout2ModManager</AssemblyName>
+    <Version>0.7.0</Version>
+    <RootNamespace>Redout2ModManager</RootNamespace>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <TieredPGO>false</TieredPGO>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Decodes the WebP thumbnails Nexus serves (GDI+ cannot). Free for open-source projects under the Six Labors Split License. -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.*" />
+    <!-- Reads .rar and .7z mod archives (ZIP uses the framework). MIT licensed. -->
+    <PackageReference Include="SharpCompress" Version="0.38.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\app.ico" LogicalName="Redout2ModManager.Assets.app.ico" />
+    <EmbeddedResource Include="Assets\background.jpg" LogicalName="Redout2ModManager.Assets.background.jpg" />
+  </ItemGroup>
+</Project>
